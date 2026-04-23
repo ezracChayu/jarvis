@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+<meta charset="UTF-8">
+<title>JARVIS — תוכנית עבודה</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700;900&display=swap');
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    font-family: 'Heebo', Arial, sans-serif;
+    background: #0a0e1a;
+    color: #e0e6f0;
+    direction: rtl;
+  }
+
+  .page {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 40px 50px;
+  }
+
+  /* HEADER */
+  .header {
+    text-align: center;
+    padding: 50px 0 40px;
+    border-bottom: 1px solid #1e3a5f;
+    margin-bottom: 40px;
+  }
+
+  .header .logo {
+    font-size: 72px;
+    font-weight: 900;
+    letter-spacing: 12px;
+    background: linear-gradient(135deg, #00d4ff, #0080ff, #00d4ff);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    text-shadow: none;
+  }
+
+  .header .subtitle {
+    font-size: 16px;
+    color: #5a8fbf;
+    letter-spacing: 4px;
+    margin-top: 6px;
+    font-weight: 300;
+  }
+
+  .header .date {
+    margin-top: 16px;
+    font-size: 13px;
+    color: #3a5f80;
+  }
+
+  /* STATUS BAR */
+  .status-bar {
+    background: linear-gradient(135deg, #0d1f35, #0a1628);
+    border: 1px solid #1e4060;
+    border-radius: 12px;
+    padding: 20px 30px;
+    margin-bottom: 40px;
+    display: flex;
+    justify-content: space-around;
+    text-align: center;
+  }
+
+  .status-item .label { font-size: 11px; color: #4a7090; letter-spacing: 2px; }
+  .status-item .value { font-size: 22px; font-weight: 700; color: #00d4ff; margin-top: 4px; }
+
+  /* COMPLETED */
+  .completed-section {
+    background: linear-gradient(135deg, #0d2010, #081808);
+    border: 1px solid #1a4020;
+    border-radius: 12px;
+    padding: 24px 30px;
+    margin-bottom: 40px;
+  }
+
+  .completed-section h3 {
+    color: #4caf50;
+    font-size: 14px;
+    letter-spacing: 3px;
+    margin-bottom: 16px;
+  }
+
+  .completed-list { list-style: none; }
+  .completed-list li {
+    padding: 6px 0;
+    color: #7fba7f;
+    font-size: 14px;
+  }
+  .completed-list li::before { content: "✅ "; }
+
+  /* PHASES */
+  .phase {
+    background: linear-gradient(135deg, #0d1828, #080f1e);
+    border: 1px solid #1a3050;
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 24px;
+    position: relative;
+    overflow: hidden;
+    page-break-inside: avoid;
+  }
+
+  .phase::before {
+    content: '';
+    position: absolute;
+    top: 0; right: 0;
+    width: 4px;
+    height: 100%;
+  }
+
+  .phase-1::before { background: #00d4ff; }
+  .phase-2::before { background: #0080ff; }
+  .phase-3::before { background: #7c3aed; }
+  .phase-4::before { background: #059669; }
+  .phase-5::before { background: #d97706; }
+  .phase-6::before { background: #dc2626; }
+  .phase-7::before { background: #db2777; }
+
+  .phase-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  .phase-number {
+    width: 48px; height: 48px;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; font-weight: 900;
+    flex-shrink: 0;
+  }
+
+  .phase-1 .phase-number { background: rgba(0,212,255,0.15); color: #00d4ff; }
+  .phase-2 .phase-number { background: rgba(0,128,255,0.15); color: #0080ff; }
+  .phase-3 .phase-number { background: rgba(124,58,237,0.15); color: #a78bfa; }
+  .phase-4 .phase-number { background: rgba(5,150,105,0.15); color: #34d399; }
+  .phase-5 .phase-number { background: rgba(217,119,6,0.15); color: #fbbf24; }
+  .phase-6 .phase-number { background: rgba(220,38,38,0.15); color: #f87171; }
+  .phase-7 .phase-number { background: rgba(219,39,119,0.15); color: #f472b6; }
+
+  .phase-title { font-size: 18px; font-weight: 700; color: #c0d8f0; }
+  .phase-meta { font-size: 12px; color: #4a6a8a; margin-top: 3px; }
+
+  .phase-items { list-style: none; padding-right: 8px; }
+  .phase-items li {
+    padding: 5px 0;
+    font-size: 13.5px;
+    color: #7090b0;
+    border-bottom: 1px solid #0d1e30;
+  }
+  .phase-items li:last-child { border-bottom: none; }
+  .phase-items li::before { content: "◆ "; color: #2a4a6a; font-size: 10px; }
+
+  .phase-result {
+    margin-top: 16px;
+    padding: 12px 16px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 600;
+  }
+
+  .phase-1 .phase-result { background: rgba(0,212,255,0.08); color: #00d4ff; }
+  .phase-2 .phase-result { background: rgba(0,128,255,0.08); color: #60a5fa; }
+  .phase-3 .phase-result { background: rgba(124,58,237,0.08); color: #a78bfa; }
+  .phase-4 .phase-result { background: rgba(5,150,105,0.08); color: #34d399; }
+  .phase-5 .phase-result { background: rgba(217,119,6,0.08); color: #fbbf24; }
+  .phase-6 .phase-result { background: rgba(220,38,38,0.08); color: #f87171; }
+  .phase-7 .phase-result { background: rgba(219,39,119,0.08); color: #f472b6; }
+
+  /* TABLE */
+  .timeline-section { margin-top: 40px; page-break-inside: avoid; }
+  .timeline-section h2 {
+    font-size: 14px;
+    letter-spacing: 3px;
+    color: #4a7090;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #1a3050;
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: #0d1828;
+    color: #4a7090;
+    font-size: 11px;
+    letter-spacing: 2px;
+    padding: 12px 16px;
+    text-align: right;
+    border-bottom: 2px solid #1a3050;
+  }
+
+  td {
+    padding: 12px 16px;
+    border-bottom: 1px solid #0d1828;
+    color: #8090a8;
+  }
+
+  tr:last-child td { border-bottom: none; }
+
+  .diff-low  { color: #34d399; font-weight: 600; }
+  .diff-mid  { color: #fbbf24; font-weight: 600; }
+  .diff-high { color: #f87171; font-weight: 600; }
+
+  /* FOOTER */
+  .footer {
+    text-align: center;
+    margin-top: 50px;
+    padding-top: 30px;
+    border-top: 1px solid #1a3050;
+    color: #2a4a6a;
+    font-size: 12px;
+    letter-spacing: 2px;
+  }
+
+  /* PRINT */
+  @media print {
+    body { background: #fff; color: #111; }
+    .page { padding: 20px 30px; }
+    .phase, .status-bar, .completed-section {
+      background: #f8f9fa !important;
+      border-color: #dee2e6 !important;
+      -webkit-print-color-adjust: exact;
+      print-color-adjust: exact;
+    }
+    .header .logo { -webkit-text-fill-color: #0080ff; }
+  }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HEADER -->
+  <div class="header">
+    <div class="logo">JARVIS</div>
+    <div class="subtitle">JUST A RATHER VERY INTELLIGENT SYSTEM</div>
+    <div class="date">תוכנית עבודה | אפריל 2026</div>
+  </div>
+
+  <!-- STATUS BAR -->
+  <div class="status-bar">
+    <div class="status-item">
+      <div class="label">שלבים</div>
+      <div class="value">7</div>
+    </div>
+    <div class="status-item">
+      <div class="label">הושלם</div>
+      <div class="value">1</div>
+    </div>
+    <div class="status-item">
+      <div class="label">זמן כולל משוער</div>
+      <div class="value">~8 שבועות</div>
+    </div>
+    <div class="status-item">
+      <div class="label">מכשירים יעד</div>
+      <div class="value">5+</div>
+    </div>
+  </div>
+
+  <!-- COMPLETED -->
+  <div class="completed-section">
+    <h3>✦ בוצע — תשתית הפרויקט</h3>
+    <ul class="completed-list">
+      <li>מבנה תיקיות מלא (core, voice, skills, config, mobile)</li>
+      <li>מנוע קול: Wake word + Whisper STT + edge-tts TTS</li>
+      <li>מסד נתונים SQLite עם WAL mode, indexes, חיבור קבוע</li>
+      <li>מוח Claude API עם tool-use וזיכרון הקשר</li>
+      <li>שרת WebSocket Hub (פורט 7799) לסנכרון מכשירים</li>
+      <li>כישורי מחשב בסיסיים (פתיחת אפליקציות, חיפוש, מידע מערכת)</li>
+      <li>Commit + Push ל-GitHub | כלי git מוגדרים</li>
+    </ul>
+  </div>
+
+  <!-- PHASES -->
+  <div class="phase phase-1">
+    <div class="phase-header">
+      <div class="phase-number">1</div>
+      <div>
+        <div class="phase-title">הפעלה ראשונה + בדיקות</div>
+        <div class="phase-meta">יום אחד &nbsp;|&nbsp; קושי: נמוך</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>מילוי קובץ .env עם מפתחות Anthropic ו-Picovoice</li>
+      <li>הרצת py main.py לראשונה</li>
+      <li>בדיקת לולאה מלאה: Wake word → STT → Claude → TTS</li>
+      <li>תיקון בעיות אודיו / קישוריות שיצוצו</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS מדבר ועונה על פקודות קוליות</div>
+  </div>
+
+  <div class="phase phase-2">
+    <div class="phase-header">
+      <div class="phase-number">2</div>
+      <div>
+        <div class="phase-title">כישורים מתקדמים למחשב</div>
+        <div class="phase-meta">שבוע &nbsp;|&nbsp; קושי: בינוני</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>שליטה ב-Spotify (play, pause, next, volume)</li>
+      <li>ניהול חלונות (מזעור, הגדלה, מעבר בין אפליקציות)</li>
+      <li>קריאת שעה, תאריך, מזג אוויר</li>
+      <li>ניתוח קבצי Excel / CSV בפקודה קולית</li>
+      <li>שליחת מייל דרך Gmail API</li>
+      <li>תזכורות ומעורר מובנה</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS מבצע משימות יומיות אמיתיות</div>
+  </div>
+
+  <div class="phase phase-3">
+    <div class="phase-header">
+      <div class="phase-number">3</div>
+      <div>
+        <div class="phase-title">Dashboard — ממשק ויזואלי</div>
+        <div class="phase-meta">שבוע &nbsp;|&nbsp; קושי: בינוני</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>ממשק Web מלא (React + FastAPI)</li>
+      <li>מסך היסטוריית שיחות</li>
+      <li>מסך ניהול זיכרון — מה JARVIS זוכר עליך</li>
+      <li>מסך מכשירים מחוברים + סטטוס</li>
+      <li>לחצן "דבר עם JARVIS" מהדפדפן</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: פאנל ניהול נגיש מכל דפדפן ברשת</div>
+  </div>
+
+  <div class="phase phase-4">
+    <div class="phase-header">
+      <div class="phase-number">4</div>
+      <div>
+        <div class="phase-title">אפליקציית Android</div>
+        <div class="phase-meta">שבועיים &nbsp;|&nbsp; קושי: גבוה</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>אפליקציית React Native (Android)</li>
+      <li>חיבור WebSocket לשרת JARVIS</li>
+      <li>קלט קולי מהטלפון</li>
+      <li>ממשק צ'אט עם היסטוריה</li>
+      <li>התראות Push מ-JARVIS לטלפון</li>
+      <li>הרצה ברקע — תמיד מחובר</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS בכיס — פקודות מכל מקום בבית</div>
+  </div>
+
+  <div class="phase phase-5">
+    <div class="phase-header">
+      <div class="phase-number">5</div>
+      <div>
+        <div class="phase-title">אינטגרציות חיצוניות</div>
+        <div class="phase-meta">שבוע &nbsp;|&nbsp; קושי: בינוני</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>Google Calendar — קריאה ויצירת אירועים קולית</li>
+      <li>WhatsApp Web — שליחת הודעות בפקודה</li>
+      <li>Google Maps — ניווט קולי</li>
+      <li>Smart Home — שליטה במכשירים תואמים (אם קיימים)</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS מחובר לכל החיים הדיגיטליים</div>
+  </div>
+
+  <div class="phase phase-6">
+    <div class="phase-header">
+      <div class="phase-number">6</div>
+      <div>
+        <div class="phase-title">שעון חכם + רכב</div>
+        <div class="phase-meta">שבועיים &nbsp;|&nbsp; קושי: גבוה</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>אפליקציית Wear OS לשעון Android</li>
+      <li>Wake word מהשעון</li>
+      <li>Android Auto — פקודות ברכב</li>
+      <li>ניווט, הודעות ומוזיקה בנסיעה</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS על כל מכשיר — מחשב, טלפון, שעון, רכב</div>
+  </div>
+
+  <div class="phase phase-7">
+    <div class="phase-header">
+      <div class="phase-number">7</div>
+      <div>
+        <div class="phase-title">AI מתקדם + ראיית מחשב</div>
+        <div class="phase-meta">שוטף &nbsp;|&nbsp; קושי: גבוה</div>
+      </div>
+    </div>
+    <ul class="phase-items">
+      <li>Screen reading — JARVIS רואה ומבין מה על המסך</li>
+      <li>זיהוי דפוסים בהרגלים ולמידה אישית</li>
+      <li>ניתוח אוטומטי של דוחות וגרפים</li>
+      <li>זיכרון ארוך טווח חכם</li>
+      <li>מענה מרובה-שלבים ("Plan my week")</li>
+    </ul>
+    <div class="phase-result">🎯 תוצאה: JARVIS אמיתי — מבין הקשר, לומד, מסייע ברמה גבוהה</div>
+  </div>
+
+  <!-- TIMELINE TABLE -->
+  <div class="timeline-section">
+    <h2>◆ לוח זמנים ורמות קושי</h2>
+    <table>
+      <thead>
+        <tr>
+          <th>שלב</th>
+          <th>נושא</th>
+          <th>זמן משוער</th>
+          <th>קושי</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr><td>1</td><td>הפעלה ראשונה + בדיקות</td><td>יום אחד</td><td class="diff-low">נמוך</td></tr>
+        <tr><td>2</td><td>כישורים מתקדמים למחשב</td><td>שבוע</td><td class="diff-mid">בינוני</td></tr>
+        <tr><td>3</td><td>Dashboard ויזואלי</td><td>שבוע</td><td class="diff-mid">בינוני</td></tr>
+        <tr><td>4</td><td>אפליקציית Android</td><td>שבועיים</td><td class="diff-high">גבוה</td></tr>
+        <tr><td>5</td><td>אינטגרציות חיצוניות</td><td>שבוע</td><td class="diff-mid">בינוני</td></tr>
+        <tr><td>6</td><td>שעון חכם + רכב</td><td>שבועיים</td><td class="diff-high">גבוה</td></tr>
+        <tr><td>7</td><td>AI מתקדם + ראיית מחשב</td><td>שוטף</td><td class="diff-high">גבוה</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    JARVIS PERSONAL AI SYSTEM &nbsp;|&nbsp; BUILT WITH CLAUDE SONNET 4.6 &nbsp;|&nbsp; 2026
+  </div>
+
+</div>
+</body>
+</html>
