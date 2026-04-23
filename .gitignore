@@ -1,0 +1,29 @@
+# סודות — לא נדחפים ל-GitHub
+.env
+
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+
+# מסד נתונים מקומי
+*.db
+*.sqlite
+
+# Virtual environment
+venv/
+.venv/
+env/
+
+# Whisper model cache
+.cache/
+
+# IDE
+.vscode/settings.json
+*.suo
+.idea/
